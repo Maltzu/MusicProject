@@ -17,7 +17,8 @@ public class Main {
             System.out.println("\t2.Cari Music");
             System.out.println("\t3.Tambah Music");
             System.out.println("\t4.Ubah Music");
-            System.out.print("\t5.Hapus Music");
+            System.out.println("\t5.Hapus Music");
+            System.out.print("\t6.Putar Music");
 
             System.out.print("\n\nPilihan Anda : ");
             PilihanUser = terminalInput.next();
@@ -53,8 +54,14 @@ public class Main {
                     System.out.println("===========");
                     DeleteMusic();
                     break;
+                case "6":
+                    System.out.println("\n=========");
+                    System.out.println("Play Song");
+                    System.out.println("=========");
+                    PlaySong();
+                    break;
                 default:
-                    System.out.println("\nInput anda tidak ditemukan \nSilahkan pilih [1-5]");
+                    System.out.println("\nInput anda tidak ditemukan \nSilahkan pilih [1-6]");
                     break;
             }
                 isLanjutkan = getYesOrNo("Apakah Anda Ingin Melanjutkan");
@@ -141,6 +148,46 @@ public class Main {
         bufferedoutput.close();
     }
 
+    private static void PlaySong() throws IOException{
+
+        try{
+            File file = new File("Musicbase.txt");
+        }catch (Exception e){
+            System.err.println("Database tidak ditemukan");
+            System.err.println("Silahkan tambah data terlebih dahulu");
+            AddMusic();
+            return;
+        }
+
+        FileReader fileinput = new FileReader("Musicbase.txt");
+        BufferedReader bufferedInput = new BufferedReader(fileinput);
+
+        Scanner terminalInput = new Scanner(System.in);
+
+        System.out.println("List Music");
+        TampilkanMusic();
+
+        System.out.print("\nMasukkan Nomor Music Yang Akan Di Putar: ");
+        int PlayMusic = terminalInput.nextInt();
+
+        String data = bufferedInput.readLine();
+        int entryCounts = 0;
+
+        while (data != null){
+            entryCounts++;
+
+
+            StringTokenizer st = new StringTokenizer(data,",");
+            st.nextToken();
+            st.nextToken();
+            String LINKYT = st.nextToken();
+            if(entryCounts == PlayMusic){
+                new ProcessBuilder("cmd","/c","start ",LINKYT).inheritIO().start();
+            }
+            data = bufferedInput.readLine();
+        }
+    }
+
     private static void ChangeMusic() throws IOException{
         // Kita Ambil Data Base Original
         File database = new File("Musicbase.txt");
@@ -153,7 +200,7 @@ public class Main {
         BufferedWriter bufferedOutput = new BufferedWriter(fileOutput);
 
         // tampilkan data
-        System.out.println("List Buku");
+        System.out.println("List Music");
         TampilkanMusic();
 
         // ambil user input / pilihan Data
@@ -186,7 +233,7 @@ public class Main {
                 String[] tempData = new String[3];
 
                 stringTokenizer = new StringTokenizer(data,",");
-                String originalData = stringTokenizer.nextToken();
+                String originalData;
 
                 for(int i = 0;i < fieldData.length;i++){
                     boolean isChange = getYesOrNo("Apakah Anda Ingin Merubah " + fieldData[i]);
@@ -195,7 +242,7 @@ public class Main {
                         // user input
 
                         terminalInput = new Scanner(System.in);
-                        System.out.println("\nMasukkan " + fieldData[i] + " baru : ");
+                        System.out.print("\nMasukkan " + fieldData[i] + " baru : ");
                         tempData[i] = terminalInput.nextLine();
                     } else {
                         tempData[i] = originalData;
@@ -244,7 +291,11 @@ public class Main {
 
         // menulis data ke file
         bufferedOutput.flush();
-
+        fileinput.close();
+        bufferedinput.close();
+        fileOutput.close();
+        bufferedOutput.close();
+        System.gc();
         // delete data original database
         database.delete();
 
@@ -269,7 +320,7 @@ public class Main {
 
         // kita ambil input dari user untuk delete music
         Scanner terminalInput = new Scanner(System.in);
-        System.out.println("Masukkan nomor Music Yang Akan Di Hapus: ");
+        System.out.print("Masukkan nomor Music Yang Akan Di Hapus: ");
         int DeleteNum = terminalInput.nextInt();
 
         // looping membaca tiap data baris dan skip data yang akan di hapus
@@ -314,7 +365,11 @@ public class Main {
 
         // menulis data ke file
         bufferedOutput.flush();
-
+        fileinput.close();
+        bufferedinput.close();
+        fileOutput.close();
+        bufferedOutput.close();
+        System.gc();
         // delete original data
         Database.delete();
 
